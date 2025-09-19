@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCHIDS Branch Search</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- MapTiler SDK -->
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.1.1/maptiler-sdk.css" rel="stylesheet" />
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v1.1.1/maptiler-sdk.umd.min.js"></script>
+    <style>
+        /* Use Inter as the default font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* A subtle background pattern for visual interest */
+        body {
+            background-color: #f8fafc; /* bg-slate-50 */
+            background-image: radial-gradient(#dbeafe 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        /* Custom styles for animations */
+        .result-card {
+            animation: fadeIn 0.5s ease-in-out forwards;
+            opacity: 0;
+        }
+        #map {
+            height: 100%;
+            min-height: 400px;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+    <!-- App container with flex layout to push footer to the bottom -->
+    <div class="flex flex-col min-h-screen">
+
+        <!-- Header Section -->
+        <header class="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo and Title -->
+                    <div class="flex items-center space-x-3">
+                        <svg class="h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                        </svg>
+                        <h1 class="text-xl font-bold text-gray-900">Orchids The International School</h1>
+                    </div>
+                    <!-- GitHub Link Button -->
+                    <a href="https://github.com/rajputpritesh1" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center space-x-2 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Fork on Github</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+                
+                <div class="text-center">
+                    <!-- Hero Section -->
+                    <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight">
+                        Find Your Nearest <span class="text-blue-600">Orchids The International School</span> Branch
+                    </h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+                        Enter your location to find the nearest branch.
+                    </p>
+
+                    <!-- Search Box -->
+                    <div class="mt-10 max-w-xl mx-auto">
+                        <form id="search-form" class="relative group">
+                            <svg class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                               <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                            </svg>
+
+                            <input 
+                                type="search" 
+                                name="search" 
+                                id="search-input" 
+                                placeholder="Enter your address, city, or area..."
+                                class="w-full py-4 pl-12 pr-40 text-base md:text-lg bg-white border-2 border-gray-300 rounded-full shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 ease-in-out"
+                            >
+                            <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white font-semibold px-4 md:px-6 py-2.5 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform group-hover:scale-105">
+                                Search
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Search Results Section -->
+                <div id="results-container" class="mt-12 max-w-7xl mx-auto hidden">
+                    <div class="lg:flex lg:space-x-8">
+                        <!-- Map Container -->
+                        <div class="lg:w-1/2">
+                           <div id="map" class="w-full h-full rounded-lg shadow-md border border-gray-200"></div>
+                        </div>
+                        <!-- Results List -->
+                        <div class="lg:w-1/2 mt-8 lg:mt-0">
+                             <h3 id="results-title" class="text-2xl font-bold text-gray-800 text-left mb-6">Search Results</h3>
+                            <div id="results-list" class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                                <!-- Dynamic search results will be inserted here -->
+                            </div>
+                            <p id="no-results" class="text-gray-600 text-lg mt-6 hidden">No branches found in this area.</p>
+                             <p id="geocode-error" class="text-red-600 text-lg mt-6 hidden">Could not find this location. Please try again.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="bg-white border-t border-gray-200">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm text-gray-500">
+                <p>&copy; 2025 K12 Techno Services Pvt Ltd. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let map;
+        let markers = [];
+        let userLocationMarker;
+        // Data for school branches with coordinates
+        const branches = [
+            // Bengaluru
+            { name: 'Orchids The International School, Bannerghatta', area: 'Bannerghatta', city: 'Bengaluru', state: 'Karnataka', pincode: '560083', lat: 12.8710, lon: 77.5997 },
+            { name: 'Orchids The International School, BTM Layout', area: 'BTM Layout', city: 'Bengaluru', state: 'Karnataka', pincode: '560076', lat: 12.9166, lon: 77.6101 },
+            { name: 'Orchids The International School, CV Raman Nagar', area: 'CV Raman Nagar', city: 'Bengaluru', state: 'Karnataka', pincode: '560093', lat: 12.9918, lon: 77.6586 },
+            { name: 'Orchids The International School, Haralur', area: 'Haralur', city: 'Bengaluru', state: 'Karnataka', pincode: '560102', lat: 12.9060, lon: 77.6601 },
+            { name: 'Orchids The International School, Hennur Road', area: 'Hennur Road', city: 'Bengaluru', state: 'Karnataka', pincode: '560077', lat: 13.0360, lon: 77.6433 },
+            { name: 'Orchids The International School, Horamavu', area: 'Horamavu', city: 'Bengaluru', state: 'Karnataka', pincode: '560043', lat: 13.0233, lon: 77.6633 },
+            { name: 'Orchids The International School, Jakkur', area: 'Jakkur', city: 'Bengaluru', state: 'Karnataka', pincode: '560064', lat: 13.0780, lon: 77.6065 },
+            { name: 'Orchids The International School, Jalahalli', area: 'Jalahalli', city: 'Bengaluru', state: 'Karnataka', pincode: '560013', lat: 13.0410, lon: 77.5450 },
+            { name: 'Orchids The International School, JP Nagar', area: 'JP Nagar', city: 'Bengaluru', state: 'Karnataka', pincode: '560078', lat: 12.9068, lon: 77.5843 },
+            { name: 'Orchids The International School, Kadugodi', area: 'Kadugodi', city: 'Bengaluru', state: 'Karnataka', pincode: '560067', lat: 12.9934, lon: 77.7634 },
+            { name: 'Orchids The International School, Kanakapura Road', area: 'Kanakapura Road', city: 'Bengaluru', state: 'Karnataka', pincode: '560062', lat: 12.8931, lon: 77.5494 },
+            { name: 'Orchids The International School, Kengeri', area: 'Kengeri', city: 'Bengaluru', state: 'Karnataka', pincode: '560060', lat: 12.9185, lon: 77.4827 },
+            { name: 'Orchids The International School, Magadi Road', area: 'Magadi Road', city: 'Bengaluru', state: 'Karnataka', pincode: '560079', lat: 12.9774, lon: 77.5235 },
+            { name: 'Orchids The International School, Mahalakshmi Layout', area: 'Mahalakshmi Layout', city: 'Bengaluru', state: 'Karnataka', pincode: '560086', lat: 13.0098, lon: 77.5492 },
+            { name: 'Orchids The International School, Majestic', area: 'Majestic', city: 'Bengaluru', state: 'Karnataka', pincode: '560009', lat: 12.9767, lon: 77.5713 },
+            { name: 'Orchids The International School, Makali', area: 'Makali', city: 'Bengaluru', state: 'Karnataka', pincode: '562123', lat: 13.1119, lon: 77.4518 },
+            { name: 'Orchids The International School, Mysore Road', area: 'Mysore Road', city: 'Bengaluru', state: 'Karnataka', pincode: '560039', lat: 12.9461, lon: 77.5133 },
+            { name: 'Orchids The International School, Nagarbhavi', area: 'Nagarbhavi', city: 'Bengaluru', state: 'Karnataka', pincode: '560072', lat: 12.9719, lon: 77.5126 },
+            { name: 'Orchids The International School, Panathur', area: 'Panathur', city: 'Bengaluru', state: 'Karnataka', pincode: '560103', lat: 12.9523, lon: 77.7083 },
+            { name: 'Orchids The International School, Rajaji Nagar', area: 'Rajaji Nagar', city: 'Bengaluru', state: 'Karnataka', pincode: '560010', lat: 12.9904, lon: 77.5528 },
+            { name: 'Orchids The International School, Sahakar Nagar', area: 'Sahakar Nagar', city: 'Bengaluru', state: 'Karnataka', pincode: '560092', lat: 13.0598, lon: 77.5894 },
+            { name: 'Orchids The International School, Sarjapur Road', area: 'Sarjapur Road', city: 'Bengaluru', state: 'Karnataka', pincode: '560035', lat: 12.9129, lon: 77.6778 },
+            { name: 'Orchids The International School, Vijaya Nagar', area: 'Vijaya Nagar', city: 'Bengaluru', state: 'Karnataka', pincode: '560040', lat: 12.9698, lon: 77.5224 },
+            { name: 'Orchids The International School, Whitefield', area: 'Whitefield', city: 'Bengaluru', state: 'Karnataka', pincode: '560066', lat: 12.9698, lon: 77.7499 },
+            { name: 'Orchids The International School, Yelahanka', area: 'Yelahanka', city: 'Bengaluru', state: 'Karnataka', pincode: '560064', lat: 13.0999, lon: 77.5956 },
+            { name: 'Orchids The International School, Yelahanka II', area: 'Yelahanka II', city: 'Bengaluru', state: 'Karnataka', pincode: '560064', lat: 13.1165, lon: 77.6073 },
+
+            // Mumbai
+            { name: 'Orchids The International School, Borivali West', area: 'Borivali West', city: 'Mumbai', state: 'Maharashtra', pincode: '400092', lat: 19.2323, lon: 72.8485 },
+            { name: 'Orchids The International School, Dombivli', area: 'Dombivli', city: 'Mumbai', state: 'Maharashtra', pincode: '421201', lat: 19.2184, lon: 73.0869 },
+            { name: 'Orchids The International School, Koparkhairane', area: 'Koparkhairane', city: 'Mumbai', state: 'Maharashtra', pincode: '400709', lat: 19.1051, lon: 72.9942 },
+            { name: 'Orchids The International School, Koparkhairane Sector 14', area: 'Koparkhairane Sector 14', city: 'Mumbai', state: 'Maharashtra', pincode: '400709', lat: 19.1022, lon: 73.0031 },
+            { name: 'Orchids The International School, Kurla', area: 'Kurla', city: 'Mumbai', state: 'Maharashtra', pincode: '400070', lat: 19.0645, lon: 72.8806 },
+            { name: 'Orchids The International School, Malad East', area: 'Malad East', city: 'Mumbai', state: 'Maharashtra', pincode: '400097', lat: 19.1895, lon: 72.8596 },
+            { name: 'Orchids The International School, Malad West', area: 'Malad West', city: 'Mumbai', state: 'Maharashtra', pincode: '400064', lat: 19.1856, lon: 72.8335 },
+            { name: 'Orchids The International School, Masjid Bunder', area: 'Masjid Bunder', city: 'Mumbai', state: 'Maharashtra', pincode: '400009', lat: 18.9548, lon: 72.8363 },
+            { name: 'Orchids The International School, Mulund East', area: 'Mulund East', city: 'Mumbai', state: 'Maharashtra', pincode: '400081', lat: 19.1764, lon: 72.9525 },
+            { name: 'Orchids The International School, Seawoods', area: 'Seawoods', city: 'Mumbai', state: 'Maharashtra', pincode: '400706', lat: 19.0343, lon: 73.0191 },
+            { name: 'Orchids The International School, Sion', area: 'Sion', city: 'Mumbai', state: 'Maharashtra', pincode: '400022', lat: 19.0416, lon: 72.8631 },
+            { name: 'Orchids The International School, Thane', area: 'Thane', city: 'Mumbai', state: 'Maharashtra', pincode: '400607', lat: 19.2183, lon: 72.9781 },
+            { name: 'Orchids The International School, Vikhroli', area: 'Vikhroli', city: 'Mumbai', state: 'Maharashtra', pincode: '400079', lat: 19.0911, lon: 72.9231 },
+            { name: 'Orchids The International School, Yari Road', area: 'Yari Road', city: 'Mumbai', state: 'Maharashtra', pincode: '400061', lat: 19.1258, lon: 72.8139 },
+
+            // Pune
+            { name: 'Orchids The International School, Ambegaon', area: 'Ambegaon', city: 'Pune', state: 'Maharashtra', pincode: '411046', lat: 18.4485, lon: 73.8344 },
+            { name: 'Orchids The International School, Chinchwad', area: 'Chinchwad', city: 'Pune', state: 'Maharashtra', pincode: '411033', lat: 18.6272, lon: 73.7879 },
+            { name: 'Orchids The International School, Hinjewadi', area: 'Hinjewadi', city: 'Pune', state: 'Maharashtra', pincode: '411057', lat: 18.5912, lon: 73.7389 },
+            { name: 'Orchids The International School, Manjri', area: 'Manjri', city: 'Pune', state: 'Maharashtra', pincode: '412307', lat: 18.5085, lon: 73.9782 },
+            { name: 'Orchids The International School, Nigdi', area: 'Nigdi', city: 'Pune', state: 'Maharashtra', pincode: '411044', lat: 18.6493, lon: 73.7629 },
+            { name: 'Orchids The International School, Sus Road', area: 'Sus Road', city: 'Pune', state: 'Maharashtra', pincode: '411021', lat: 18.5445, lon: 73.7745 },
+            { name: 'Orchids The International School, Swargate', area: 'Swargate', city: 'Pune', state: 'Maharashtra', pincode: '411037', lat: 18.5015, lon: 73.8635 },
+            { name: 'Orchids The International School, Tathawade', area: 'Tathawade', city: 'Pune', state: 'Maharashtra', pincode: '411033', lat: 18.6087, lon: 73.7431 },
+            { name: 'Orchids The International School, Undri', area: 'Undri', city: 'Pune', state: 'Maharashtra', pincode: '411060', lat: 18.4529, lon: 73.9016 },
+            { name: 'Orchids The International School, Wadgaon Sheri', area: 'Wadgaon Sheri', city: 'Pune', state: 'Maharashtra', pincode: '411014', lat: 18.5601, lon: 73.9160 },
+
+            // Hyderabad
+            { name: 'Orchids The International School, Bachupally', area: 'Bachupally', city: 'Hyderabad', state: 'Telangana', pincode: '500090', lat: 17.5247, lon: 78.3850 },
+            { name: 'Orchids The International School, Bandlaguda', area: 'Bandlaguda', city: 'Hyderabad', state: 'Telangana', pincode: '500086', lat: 17.3486, lon: 78.4116 },
+            { name: 'Orchids The International School, Bolarum', area: 'Bolarum', city: 'Hyderabad', state: 'Telangana', pincode: '500010', lat: 17.5186, lon: 78.5304 },
+            { name: 'Orchids The International School, Jubilee Hills', area: 'Jubilee Hills', city: 'Hyderabad', state: 'Telangana', pincode: '500033', lat: 17.4332, lon: 78.4069 },
+            { name: 'Orchids The International School, Kapra', area: 'Kapra', city: 'Hyderabad', state: 'Telangana', pincode: '500062', lat: 17.4815, lon: 78.5731 },
+            { name: 'Orchids The International School, Langar Houz', area: 'Langar Houz', city: 'Hyderabad', state: 'Telangana', pincode: '500008', lat: 17.3770, lon: 78.4239 },
+            { name: 'Orchids The International School, Uppal', area: 'Uppal', city: 'Hyderabad', state: 'Telangana', pincode: '500039', lat: 17.4042, lon: 78.5630 },
+
+            // Chennai
+            { name: 'Orchids The International School, Korattur', area: 'Korattur', city: 'Chennai', state: 'Tamil Nadu', pincode: '600080', lat: 13.1119, lon: 80.1947 },
+            { name: 'Orchids The International School, Manapakkam', area: 'Manapakkam', city: 'Chennai', state: 'Tamil Nadu', pincode: '600125', lat: 13.0200, lon: 80.1718 },
+            { name: 'Orchids The International School, Pallavaram', area: 'Pallavaram', city: 'Chennai', state: 'Tamil Nadu', pincode: '600043', lat: 12.9731, lon: 80.1492 },
+            { name: 'Orchids The International School, Pallikaranai', area: 'Pallikaranai', city: 'Chennai', state: 'Tamil Nadu', pincode: '600100', lat: 12.9377, lon: 80.2016 },
+            { name: 'Orchids The International School, Perumbakkam', area: 'Perumbakkam', city: 'Chennai', state: 'Tamil Nadu', pincode: '600100', lat: 12.9213, lon: 80.2100 },
+            { name: 'Orchids The International School, Pulianthope', area: 'Pulianthope', city: 'Chennai', state: 'Tamil Nadu', pincode: '600012', lat: 13.1064, lon: 80.2642 },
+            { name: 'Orchids The International School, Thoraipakkam', area: 'Thoraipakkam', city: 'Chennai', state: 'Tamil Nadu', pincode: '600097', lat: 12.9511, lon: 80.2411 },
+            { name: 'Orchids The International School, Velachery', area: 'Velachery', city: 'Chennai', state: 'Tamil Nadu', pincode: '600042', lat: 12.9785, lon: 80.2185 },
+
+            // Kolkata
+            { name: 'Orchids The International School, Joka', area: 'Joka', city: 'Kolkata', state: 'West Bengal', pincode: '700104', lat: 22.4633, lon: 88.3048 },
+            { name: 'Orchids The International School, Madhyamgram', area: 'Madhyamgram', city: 'Kolkata', state: 'West Bengal', pincode: '700129', lat: 22.7001, lon: 88.4511 },
+            { name: 'Orchids The International School, Newtown', area: 'Newtown', city: 'Kolkata', state: 'West Bengal', pincode: '700156', lat: 22.5726, lon: 88.4339 },
+
+            // Gurgaon
+            { name: 'Orchids The International School, Dwarka Expressway, Sector 113', area: 'Dwarka Expressway, Sector 113', city: 'Gurgaon', state: 'Haryana', pincode: '122017', lat: 28.5282, lon: 77.0180 },
+            { name: 'Orchids The International School, Golf Course Road', area: 'Golf Course Road', city: 'Gurgaon', state: 'Haryana', pincode: '122002', lat: 28.4566, lon: 77.0917 },
+            { name: 'Orchids The International School, Sector 56', area: 'Sector 56', city: 'Gurgaon', state: 'Haryana', pincode: '122011', lat: 28.4217, lon: 77.0911 },
+            { name: 'Orchids The International School, South City 1', area: 'South City 1', city: 'Gurgaon', state: 'Haryana', pincode: '122001', lat: 28.4485, lon: 77.0628 },
+
+            // Indore
+            { name: 'Orchids The International School, Aurobindo Square', area: 'Aurobindo Square', city: 'Indore', state: 'Madhya Pradesh', pincode: '452010', lat: 22.7533, lon: 75.8937 },
+            { name: 'Orchids The International School, Rajendra Nagar', area: 'Rajendra Nagar', city: 'Indore', state: 'Madhya Pradesh', pincode: '452012', lat: 22.6844, lon: 75.8306 },
+
+            // Sonipat
+            { name: 'Orchids The International School, New Braham Colony', area: 'New Braham Colony', city: 'Sonipat', state: 'Haryana', pincode: '131001', lat: 28.9956, lon: 77.0184 },
+            { name: 'Orchids The International School, Bahalgarh', area: 'Bahalgarh', city: 'Sonipat', state: 'Haryana', pincode: '131021', lat: 29.0700, lon: 77.0378 },
+
+            // Delhi
+            { name: 'Orchids The International School, Dwarka Sector-19', area: 'Dwarka Sector-19', city: 'Delhi', state: 'Delhi', pincode: '110075', lat: 28.5835, lon: 77.0505 },
+
+            // Chh Sambhabji Nagar
+            { name: 'Orchids The International School, TCH Adgaon', area: 'TCH Adgaon', city: 'Chh Sambhabji Nagar', state: 'Maharashtra', pincode: '422003', lat: 20.0266, lon: 73.8229 }, // Note: Chh Sambhabji Nagar is Nashik
+
+            // Ahmednagar
+            { name: 'Orchids The International School, Dhangarwadi', area: 'Dhangarwadi', city: 'Ahmednagar', state: 'Maharashtra', pincode: '414005', lat: 19.1413, lon: 74.7937 },
+
+            // Rohtak
+            { name: 'Orchids The International School, Gohana Road', area: 'Gohana Road', city: 'Rohtak', state: 'Haryana', pincode: '124001', lat: 28.8551, lon: 76.6213 },
+
+            // Tumkur
+            { name: 'Orchids The International School, SiraGate', area: 'SiraGate', city: 'Tumkur', state: 'Karnataka', pincode: '572106', lat: 13.3618, lon: 77.0945 },
+
+            // Nagpur
+            { name: 'Orchids The International School, Koradi Road', area: 'Koradi Road', city: 'Nagpur', state: 'Maharashtra', pincode: '441111', lat: 21.2290, lon: 79.0911 },
+
+            // Bhopal
+            { name: 'Orchids The International School, Hoshangabad Road', area: 'Hoshangabad Road', city: 'Bhopal', state: 'Madhya Pradesh', pincode: '462026', lat: 23.1815, lon: 77.4419 },
+
+            // Jabalpur
+            { name: 'Orchids The International School, Bhedaghat Road', area: 'Bhedaghat Road', city: 'Jabalpur', state: 'Madhya Pradesh', pincode: '482003', lat: 23.1367, lon: 79.8248 },
+
+            // Jodhpur
+            { name: 'Orchids The International School, Saran Nagar', area: 'Saran Nagar', city: 'Jodhpur', state: 'Rajasthan', pincode: '342015', lat: 26.2754, lon: 73.0906 },
+
+            // Jaipur
+            { name: 'Orchids The International School, Nevta', area: 'Nevta', city: 'Jaipur', state: 'Rajasthan', pincode: '302029', lat: 26.8123, lon: 75.6926 },
+
+            // Hubli-Dharwad
+            { name: 'Orchids The International School, Charantimath Gardens', area: 'Charantimath Gardens', city: 'Hubli-Dharwad', state: 'Karnataka', pincode: '580024', lat: 15.3647, lon: 75.1239 },
+
+            // Delhi NCR
+            { name: 'Orchids The International School, Delhi NCR (Sonipat)', area: 'Delhi NCR (Sonipat)', city: 'Sonipat', state: 'Haryana', pincode: '131001', lat: 28.9956, lon: 77.0184 },
+
+            // Bangalore
+            { name: 'Orchids The International School, Kanakapura Road (Residential)', area: 'Kanakapura Road (Residential)', city: 'Bengaluru', state: 'Karnataka', pincode: '560082', lat: 12.8228, lon: 77.5186 }
+        ];
+
+        function plotMarkers(branchList) {
+            markers.forEach(marker => marker.remove());
+            markers = [];
+
+            branchList.forEach(branch => {
+                if (branch.lat && branch.lon) {
+                    const popup = new maptilersdk.Popup()
+                        .setHTML(`<div class="p-1 font-sans"><strong>${branch.name}</strong><br>${branch.area}, ${branch.city}</div>`);
+
+                    const marker = new maptilersdk.Marker()
+                        .setLngLat([branch.lon, branch.lat])
+                        .setPopup(popup)
+                        .addTo(map);
+                    markers.push(marker);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // ===================================================================
+            // =================== VERY IMPORTANT / ZAROORI ======================
+            // ===================================================================
+            // REPLACE 'YOUR_MAPTILER_API_KEY' with your actual MapTiler API key.
+            // APNI ASLI MAPTILER API KEY YAHAN DAALEIN.
+            // The map will not work without it. Iske bina map kaam nahi karega.
+            // ===================================================================
+            maptilersdk.config.apiKey = 'mkRdO4MXKDiD31BFFZET';
+            
+            const defaultLocation = [77.5946, 12.9716]; // [lon, lat] for Bengaluru
+            map = new maptilersdk.Map({
+                container: 'map',
+                style: maptilersdk.MapStyle.STREETS,
+                center: defaultLocation,
+                zoom: 9,
+            });
+
+            const searchForm = document.getElementById('search-form');
+            const searchInput = document.getElementById('search-input');
+            const resultsContainer = document.getElementById('results-container');
+            const resultsList = document.getElementById('results-list');
+            const resultsTitle = document.getElementById('results-title');
+            const noResults = document.getElementById('no-results');
+            const geocodeError = document.getElementById('geocode-error');
+
+            searchForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const searchTerm = searchInput.value.trim();
+                if (!searchTerm) return;
+
+                resultsContainer.classList.add('hidden');
+                geocodeError.classList.add('hidden');
+                noResults.classList.add('hidden');
+
+                try {
+                    const geocodingResult = await maptilersdk.geocoding.forward(searchTerm, { limit: 1 });
+                    console.log("Geocoding Result:", geocodingResult); // For debugging
+                    if (geocodingResult.features.length) {
+                        const location = geocodingResult.features[0].center; // [lon, lat]
+                        const userLocation = { lat: location[1], lon: location[0] };
+                        
+                        map.flyTo({ center: location, zoom: 10 });
+
+                        if (userLocationMarker) {
+                            userLocationMarker.remove();
+                        }
+                        userLocationMarker = new maptilersdk.Marker({ color: "#0000FF" }) // Blue marker
+                            .setLngLat(location)
+                            .setPopup(new maptilersdk.Popup().setText('Your Location'))
+                            .addTo(map);
+
+                        const maxDistance = 25;
+                        const nearbyBranches = branches.map(branch => {
+                            if (!branch.lat || !branch.lon) return { ...branch, distance: Infinity };
+                            const distance = getDistance(userLocation.lat, userLocation.lon, branch.lat, branch.lon);
+                            return { ...branch, distance };
+                        })
+                        .filter(branch => branch.distance <= maxDistance)
+                        .sort((a, b) => a.distance - b.distance);
+
+                        console.log("Nearby branches found:", nearbyBranches); // For debugging
+
+                        resultsTitle.textContent = `Branches within 25km of '${searchTerm}'`;
+                        displayResults(nearbyBranches, true);
+                    } else {
+                        geocodeError.classList.remove('hidden');
+                        resultsContainer.classList.add('hidden');
+                    }
+                } catch (error) {
+                    console.error("Geocoding failed:", error);
+                    geocodeError.classList.remove('hidden');
+                    resultsContainer.classList.add('hidden');
+                }
+            });
+
+            function getDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371; // Radius of the Earth in km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
+            function displayResults(results, showDistance = false) {
+                resultsContainer.classList.remove('hidden');
+                resultsList.innerHTML = '';
+                
+                if (results.length === 0) {
+                    noResults.classList.remove('hidden');
+                    resultsList.classList.add('hidden');
+                } else {
+                    resultsList.classList.remove('hidden');
+                    noResults.classList.add('hidden');
+                    results.forEach(branch => {
+                        const distanceInfo = showDistance && branch.distance !== Infinity ? `<p class="text-sm font-semibold text-blue-600 mt-2">Distance: ${branch.distance.toFixed(2)} km</p>` : '';
+                        resultsList.innerHTML += `
+                            <div class="result-card bg-white p-6 rounded-lg shadow-md border border-gray-200 text-left transition-transform transform hover:scale-105 duration-300">
+                                <div class="flex items-start space-x-4">
+                                    <div class="flex-shrink-0 mt-1">
+                                        <svg class="h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h6.375a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75V7.5a.75.75 0 01.75-.75z" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h4 class="text-xl font-semibold text-gray-800">${branch.name}</h4>
+                                        <p class="text-gray-500 mt-1">${branch.area}, ${branch.city}</p>
+                                        <p class="text-gray-600 mt-1">${branch.state} - ${branch.pincode}</p>
+                                        ${distanceInfo}
+                                    </div>
+                                </div>
+                            </div>`;
+                    });
+                }
+                
+                plotMarkers(results);
+            }
+        });
+    </script>
+
+</body>
+</html>
+
