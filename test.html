@@ -24,11 +24,10 @@
             background-image: radial-gradient(#dbeafe 1px, transparent 1px);
             background-size: 20px 20px;
         }
-        /* Custom styles for animations and interactivity */
+        /* Custom styles for animations */
         .result-card {
             animation: fadeIn 0.5s ease-in-out forwards;
             opacity: 0;
-            cursor: pointer;
         }
         #map {
             height: 100%;
@@ -43,19 +42,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-        /* Loading spinner styles */
-        .loader {
-            border: 5px solid #f3f3f3; /* Light grey */
-            border-top: 5px solid #3b82f6; /* Blue */
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -93,10 +79,10 @@
                 <div class="text-center">
                     <!-- Hero Section -->
                     <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight">
-                        Find Your Nearest <span class="text-blue-600">Orchids</span> Branch
+                        Find Your Nearest <span class="text-blue-600">Orchids The International School</span> Branch
                     </h2>
                     <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-                        Enter your location to find the nearest branch by road.
+                        Enter your location to find the nearest branch.
                     </p>
 
                     <!-- Search Box -->
@@ -110,10 +96,10 @@
                                 type="search" 
                                 name="search" 
                                 id="search-input" 
-                                placeholder="Enter your address, city, or pincode..."
-                                class="w-full py-4 pl-12 pr-32 text-base md:text-lg bg-white border-2 border-gray-300 rounded-full shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 ease-in-out"
+                                placeholder="Enter your address, city, or area..."
+                                class="w-full py-4 pl-12 pr-40 text-base md:text-lg bg-white border-2 border-gray-300 rounded-full shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 ease-in-out"
                             >
-                            <button id="search-button" type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white font-semibold px-4 md:px-6 py-2.5 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform group-hover:scale-105 disabled:bg-blue-400 disabled:scale-100">
+                            <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white font-semibold px-4 md:px-6 py-2.5 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform group-hover:scale-105">
                                 Search
                             </button>
                         </form>
@@ -122,20 +108,19 @@
                 
                 <!-- Search Results Section -->
                 <div id="results-container" class="mt-12 max-w-7xl mx-auto hidden">
-                    <div class="lg:grid lg:grid-cols-2 lg:gap-8">
+                    <div class="lg:flex lg:space-x-8">
                         <!-- Map Container -->
-                        <div class="h-[600px] lg:h-auto">
+                        <div class="lg:w-1/2">
                            <div id="map" class="w-full h-full rounded-lg shadow-md border border-gray-200"></div>
                         </div>
                         <!-- Results List -->
-                        <div class="mt-8 lg:mt-0">
+                        <div class="lg:w-1/2 mt-8 lg:mt-0">
                              <h3 id="results-title" class="text-2xl font-bold text-gray-800 text-left mb-6">Search Results</h3>
-                             <div id="loader-container" class="hidden justify-center items-center py-20"><div class="loader"></div></div>
                             <div id="results-list" class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
                                 <!-- Dynamic search results will be inserted here -->
                             </div>
-                            <p id="no-results" class="text-gray-600 text-lg mt-6 hidden text-center">No branches found within 25km driving distance.</p>
-                             <p id="geocode-error" class="text-red-600 text-lg mt-6 hidden text-center">Could not find this location. Please try again.</p>
+                            <p id="no-results" class="text-gray-600 text-lg mt-6 hidden">No branches found in this area.</p>
+                             <p id="geocode-error" class="text-red-600 text-lg mt-6 hidden">Could not find this location. Please try again.</p>
                         </div>
                     </div>
                 </div>
@@ -148,21 +133,6 @@
                 <p>&copy; 2025 K12 Techno Services Pvt Ltd. All rights reserved.</p>
             </div>
         </footer>
-    </div>
-
-    <!-- Modal for Branch Details -->
-    <div id="details-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-2xl max-w-lg w-full p-6 relative transform transition-all scale-95 opacity-0" id="modal-content">
-            <button id="modal-close-button" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h3 id="modal-title" class="text-2xl font-bold text-gray-900">Branch Details</h3>
-            <div id="modal-body" class="mt-4 text-gray-600">
-                <!-- Details will be populated here by JavaScript -->
-            </div>
-        </div>
     </div>
 
     <script>
@@ -338,231 +308,118 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // ===================================================================
+            // =================== VERY IMPORTANT / ZAROORI ======================
+            // ===================================================================
+            // REPLACE 'YOUR_MAPTILER_API_KEY' with your actual MapTiler API key.
+            // APNI ASLI MAPTILER API KEY YAHAN DAALEIN.
+            // The map will not work without it. Iske bina map kaam nahi karega.
+            // ===================================================================
             maptilersdk.config.apiKey = 'mkRdO4MXKDiD31BFFZET';
             
-            // Bounding box for India
-            const indiaBounds = [
-                [68.1, 5.5], // Southwest coordinates
-                [97.4, 35.5]  // Northeast coordinates
-            ];
-
+            const defaultLocation = [77.5946, 12.9716]; // [lon, lat] for Bengaluru
             map = new maptilersdk.Map({
                 container: 'map',
                 style: maptilersdk.MapStyle.STREETS,
-                center: [78.9629, 20.5937], // Center of India
-                zoom: 4,
-                maxBounds: indiaBounds
+                center: defaultLocation,
+                zoom: 9,
             });
 
             const searchForm = document.getElementById('search-form');
             const searchInput = document.getElementById('search-input');
-            const searchButton = document.getElementById('search-button');
             const resultsContainer = document.getElementById('results-container');
             const resultsList = document.getElementById('results-list');
-            const loaderContainer = document.getElementById('loader-container');
             const resultsTitle = document.getElementById('results-title');
             const noResults = document.getElementById('no-results');
             const geocodeError = document.getElementById('geocode-error');
-
-            const modal = document.getElementById('details-modal');
-            const modalContent = document.getElementById('modal-content');
-            const modalCloseButton = document.getElementById('modal-close-button');
-            const modalTitle = document.getElementById('modal-title');
-            const modalBody = document.getElementById('modal-body');
-
-            // --- Modal Functions ---
-            function openModal(branch) {
-                modalTitle.textContent = branch.name;
-                modalBody.innerHTML = `
-                    <p><strong>Area:</strong> ${branch.area}</p>
-                    <p><strong>City:</strong> ${branch.city}</p>
-                    <p><strong>State:</strong> ${branch.state}</p>
-                    <p><strong>Pincode:</strong> ${branch.pincode || 'N/A'}</p>
-                    <p class="mt-4"><i>More details can be added here, such as contact information, facilities, or a link to the branch website.</i></p>
-                `;
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                setTimeout(() => {
-                    modalContent.classList.remove('scale-95', 'opacity-0');
-                }, 10); // Start transition
-            }
-
-            function closeModal() {
-                 modalContent.classList.add('scale-95', 'opacity-0');
-                 setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                }, 200); // Wait for transition
-            }
-            modalCloseButton.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => {
-                if(e.target === modal) {
-                    closeModal();
-                }
-            });
-
-            // --- Distance Calculation Functions ---
-
-            // Calculates straight-line distance (Haversine formula). Fast and cheap.
-            function getHaversineDistance(coords1, coords2) {
-                const R = 6371; // Radius of the Earth in km
-                const dLat = (coords2.lat - coords1.lat) * Math.PI / 180;
-                const dLon = (coords2.lon - coords1.lon) * Math.PI / 180;
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + 
-                          Math.cos(coords1.lat * Math.PI / 180) * Math.cos(coords2.lat * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                return R * c;
-            }
-
-            // Fetches driving distance from MapTiler Directions API. Slower and makes an API call.
-            async function getDrivingDistance(startCoords, endCoords) {
-                const apiKey = maptilersdk.config.apiKey;
-                // CORRECTED URL: Changed /directions/v1/driving/ to /routes/driving/
-                const url = `https://api.maptiler.com/routes/driving/${startCoords.lon},${startCoords.lat};${endCoords.lon},${endCoords.lat}?key=${apiKey}`;
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) { 
-                        console.error(`Error fetching directions: ${response.statusText}`);
-                        return Infinity;
-                    }
-                    const data = await response.json();
-                    if (data.routes && data.routes.length > 0) {
-                        return data.routes[0].distance / 1000; // Convert meters to km
-                    }
-                    return Infinity; // No route found
-                } catch (error) {
-                    console.error('Error fetching driving distance:', error);
-                    return Infinity;
-                }
-            }
-
-            // --- Main Search Logic ---
 
             searchForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 const searchTerm = searchInput.value.trim();
                 if (!searchTerm) return;
 
-                // 1. Show loading state and clear previous results
-                searchButton.disabled = true;
-                searchButton.textContent = 'Searching...';
-                resultsContainer.classList.remove('hidden');
-                resultsList.classList.add('hidden');
-                loaderContainer.classList.remove('hidden');
-                loaderContainer.classList.add('flex');
+                resultsContainer.classList.add('hidden');
                 geocodeError.classList.add('hidden');
                 noResults.classList.add('hidden');
 
                 try {
-                    // 2. Geocode the user's search term. Append ", India" to improve accuracy.
-                    const locationQuery = `${searchTerm}, India`;
-                    const geocodingResult = await maptilersdk.geocoding.forward(locationQuery, { limit: 1 });
-                    
+                    const geocodingResult = await maptilersdk.geocoding.forward(searchTerm, { limit: 1 });
+                    console.log("Geocoding Result:", geocodingResult); // For debugging
                     if (geocodingResult.features.length) {
                         const location = geocodingResult.features[0].center; // [lon, lat]
                         const userLocation = { lat: location[1], lon: location[0] };
                         
                         map.flyTo({ center: location, zoom: 10 });
 
-                        if (userLocationMarker) userLocationMarker.remove();
-                        userLocationMarker = new maptilersdk.Marker({ color: "#0000FF" })
+                        if (userLocationMarker) {
+                            userLocationMarker.remove();
+                        }
+                        userLocationMarker = new maptilersdk.Marker({ color: "#0000FF" }) // Blue marker
                             .setLngLat(location)
                             .setPopup(new maptilersdk.Popup().setText('Your Location'))
                             .addTo(map);
 
-                        const maxDrivingDistance = 25; // in km
-                        const maxStraightLineDistance = 35; // A wider radius for the initial cheap filter
+                        const maxDistance = 15;
+                        const nearbyBranches = branches.map(branch => {
+                            if (!branch.lat || !branch.lon) return { ...branch, distance: Infinity };
+                            const distance = getDistance(userLocation.lat, userLocation.lon, branch.lat, branch.lon);
+                            return { ...branch, distance };
+                        })
+                        .filter(branch => branch.distance <= maxDistance)
+                        .sort((a, b) => a.distance - b.distance);
 
-                        // 3. First, do a quick pre-filter using straight-line distance to find potential candidates.
-                        const candidateBranches = branches.filter(branch => {
-                            if (!branch.lat || !branch.lon) return false;
-                            const straightDistance = getHaversineDistance(userLocation, { lat: branch.lat, lon: branch.lon });
-                            return straightDistance < maxStraightLineDistance;
-                        });
+                        console.log("Nearby branches found:", nearbyBranches); // For debugging
 
-                        // 4. (FIX APPLIED HERE) Now, get the accurate driving distance SEQUENTIALLY for the small list of candidates.
-                        const branchesWithDistances = [];
-                        for (const branch of candidateBranches) {
-                            const distance = await getDrivingDistance(userLocation, { lat: branch.lat, lon: branch.lon });
-                            branchesWithDistances.push({ ...branch, distance });
-                        }
-                        
-                        // 5. Filter and sort the final list by actual driving distance.
-                        const nearbyBranches = branchesWithDistances
-                            .filter(branch => branch.distance <= maxDrivingDistance)
-                            .sort((a, b) => a.distance - b.distance);
-
-                        resultsTitle.textContent = `Branches within 25km driving distance of '${searchTerm}'`;
+                        resultsTitle.textContent = `Branches within 15km of '${searchTerm}'`;
                         displayResults(nearbyBranches, true);
                     } else {
                         geocodeError.classList.remove('hidden');
+                        resultsContainer.classList.add('hidden');
                     }
                 } catch (error) {
-                    console.error("An error occurred during search:", error);
-                    geocodeError.textContent = 'An unexpected error occurred. Please try again.';
+                    console.error("Geocoding failed:", error);
                     geocodeError.classList.remove('hidden');
-                } finally {
-                    // 6. Hide loading state and restore button
-                    searchButton.disabled = false;
-                    searchButton.textContent = 'Search';
-                    loaderContainer.classList.add('hidden');
-                    loaderContainer.classList.remove('flex');
-                    resultsList.classList.remove('hidden');
+                    resultsContainer.classList.add('hidden');
                 }
             });
 
+            function getDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371; // Radius of the Earth in km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
             function displayResults(results, showDistance = false) {
+                resultsContainer.classList.remove('hidden');
                 resultsList.innerHTML = '';
                 
                 if (results.length === 0) {
                     noResults.classList.remove('hidden');
+                    resultsList.classList.add('hidden');
                 } else {
+                    resultsList.classList.remove('hidden');
                     noResults.classList.add('hidden');
-                    results.forEach((branch, index) => {
-                        const distanceInfo = showDistance && branch.distance !== Infinity 
-                            ? `<p class="text-sm font-semibold text-blue-600 mt-2">Driving Distance: ${branch.distance.toFixed(2)} km</p>` 
-                            : '';
-                        
-                        const card = document.createElement('div');
-                        card.className = 'result-card bg-white p-6 rounded-lg shadow-md border border-gray-200 text-left transition-transform transform hover:scale-105 duration-300';
-                        
-                        card.innerHTML = `
-                            <div class="flex items-start space-x-4">
-                                <div class="flex-shrink-0 mt-1">
-                                    <svg class="h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h6.375a.75.75 0 01.75.75v1.5a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v-1.5a.75.75 0 01.75-.75zM9 15h6.375a.75.75 0 01.75.75v1.5a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v-1.5a.75.75 0 01.75-.75z" />
-                                    </svg>
-                                </div>
-                                <div class="flex-grow">
-                                    <h4 class="text-xl font-semibold text-gray-800">${branch.name}</h4>
-                                    <p class="text-gray-500 mt-1">${branch.area}, ${branch.city}</p>
-                                    <p class="text-gray-600 mt-1">${branch.state}${branch.pincode ? ` - ${branch.pincode}` : ''}</p>
-                                    ${distanceInfo}
-                                    <div class="mt-4">
-                                        <button data-index="${index}" class="details-button text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors duration-200 py-1 px-3 border border-blue-600 rounded-full hover:bg-blue-50">
-                                            View Details
-                                        </button>
+                    results.forEach(branch => {
+                        const distanceInfo = showDistance && branch.distance !== Infinity ? `<p class="text-sm font-semibold text-blue-600 mt-2">Distance: ${branch.distance.toFixed(2)} km</p>` : '';
+                        resultsList.innerHTML += `
+                            <div class="result-card bg-white p-6 rounded-lg shadow-md border border-gray-200 text-left transition-transform transform hover:scale-105 duration-300">
+                                <div class="flex items-start space-x-4">
+                                    <div class="flex-shrink-0 mt-1">
+                                        <svg class="h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h6.375a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75V7.5a.75.75 0 01.75-.75z" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h4 class="text-xl font-semibold text-gray-800">${branch.name}</h4>
+                                        <p class="text-gray-500 mt-1">${branch.area}, ${branch.city}</p>
+                                        <p class="text-gray-600 mt-1">${branch.state} - ${branch.pincode}</p>
+                                        ${distanceInfo}
                                     </div>
                                 </div>
                             </div>`;
-                        
-                        card.addEventListener('click', (e) => {
-                            if (e.target.closest('.details-button')) return; // Don't trigger if the button itself is clicked
-                            map.flyTo({ center: [branch.lon, branch.lat], zoom: 14 });
-                            const targetMarker = markers.find(m => m.getLngLat().lng === branch.lon && m.getLngLat().lat === branch.lat);
-                            if(targetMarker && !targetMarker.getPopup().isOpen()) {
-                                targetMarker.togglePopup();
-                            }
-                        });
-
-                        resultsList.appendChild(card);
-                    });
-
-                    document.querySelectorAll('.details-button').forEach(button => {
-                        button.addEventListener('click', () => {
-                            const branchIndex = button.dataset.index;
-                            openModal(results[branchIndex]);
-                        });
                     });
                 }
                 
@@ -573,4 +430,3 @@
 
 </body>
 </html>
-

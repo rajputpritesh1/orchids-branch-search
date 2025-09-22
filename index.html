@@ -86,22 +86,23 @@
                     </p>
 
                     <!-- Search Box -->
-                    <div class="mt-10 max-w-xl mx-auto">
+                    <div class="mt-10 max-w-xl mx-auto relative">
                         <form id="search-form" class="relative group">
-                            <svg class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                               <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
                             </svg>
-
                             <input 
                                 type="search" 
                                 name="search" 
                                 id="search-input" 
                                 placeholder="Enter your address, city, or area..."
-                                class="w-full py-4 pl-12 pr-40 text-base md:text-lg bg-white border-2 border-gray-300 rounded-full shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 ease-in-out"
+                                class="w-full py-4 pl-12 pr-40 text-base md:text-lg bg-white border border-gray-300 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                                autocomplete="off"
                             >
-                            <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white font-semibold px-4 md:px-6 py-2.5 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform group-hover:scale-105">
+                            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold px-5 py-2.5 rounded-full shadow transition duration-300">
                                 Search
                             </button>
+                            <div id="autocomplete-list" class="absolute z-20 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1 overflow-hidden"></div>
                         </form>
                     </div>
                 </div>
@@ -308,13 +309,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // ===================================================================
-            // =================== VERY IMPORTANT / ZAROORI ======================
-            // ===================================================================
-            // REPLACE 'YOUR_MAPTILER_API_KEY' with your actual MapTiler API key.
-            // APNI ASLI MAPTILER API KEY YAHAN DAALEIN.
-            // The map will not work without it. Iske bina map kaam nahi karega.
-            // ===================================================================
             maptilersdk.config.apiKey = 'mkRdO4MXKDiD31BFFZET';
             
             const defaultLocation = [77.5946, 12.9716]; // [lon, lat] for Bengaluru
@@ -327,11 +321,51 @@
 
             const searchForm = document.getElementById('search-form');
             const searchInput = document.getElementById('search-input');
+            const autocompleteList = document.getElementById('autocomplete-list');
             const resultsContainer = document.getElementById('results-container');
             const resultsList = document.getElementById('results-list');
             const resultsTitle = document.getElementById('results-title');
             const noResults = document.getElementById('no-results');
             const geocodeError = document.getElementById('geocode-error');
+
+            let debounceTimer;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                const query = searchInput.value.trim();
+                if (query.length < 3) {
+                    autocompleteList.innerHTML = '';
+                    return;
+                }
+                debounceTimer = setTimeout(async () => {
+                    try {
+                        const suggestions = await maptilersdk.geocoding.forward(query, { autocomplete: true, limit: 5 });
+                        if (suggestions.features && suggestions.features.length) {
+                            autocompleteList.innerHTML = suggestions.features.map(feature => `
+                                <div class="p-2 hover:bg-gray-100 cursor-pointer" data-center='${JSON.stringify(feature.center)}'>
+                                    ${feature.place_name}
+                                </div>
+                            `).join('');
+                        } else {
+                            autocompleteList.innerHTML = '';
+                        }
+                    } catch (error) {
+                        console.error("Autocomplete error:", error);
+                        autocompleteList.innerHTML = '';
+                    }
+                }, 300);
+            });
+
+            autocompleteList.addEventListener('click', (event) => {
+                const target = event.target;
+                if (target && target.dataset.center) {
+                    const center = JSON.parse(target.dataset.center);
+                    searchInput.value = target.textContent;
+                    autocompleteList.innerHTML = '';
+                    // Optionally, trigger the search form submission automatically:
+                    const eventSubmit = new Event('submit');
+                    document.getElementById('search-form').dispatchEvent(eventSubmit);
+                }
+            });
 
             searchForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
@@ -430,4 +464,3 @@
 
 </body>
 </html>
-
